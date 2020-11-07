@@ -188,6 +188,9 @@ void setup()
     pinMode(LED_INTERNET_PIN, OUTPUT);
     pinMode(LED_AUTO_PIN, OUTPUT);
 
+
+    pinMode(RESET_BUTTON_PIN,INPUT_PULLUP);
+
     digitalWrite(PUMP_PIN, OFF);
     digitalWrite(VALVE_PIN_1, OFF);
     digitalWrite(VALVE_PIN_2, OFF);
@@ -225,6 +228,25 @@ void loop()
     if (timer1sFlag)
     {
         timer1sFlag = 0;
+
+        static unsigned char resetCounter = 0;
+        if(digitalRead(RESET_BUTTON_PIN) == 0){
+            if(resetCounter == 5){
+                Serial.println(resetCounter); 
+                removeFirstTime();
+                wdt_disable();
+                wdt_enable(WDTO_15MS);
+
+                while(1) {}
+
+            }
+            resetCounter++;
+        }
+        else
+        {
+            resetCounter = 0;
+        }
+        
 
         if (!isTankEmpty)
         {
@@ -467,4 +489,13 @@ void writeFirstTime()
     {
         EEPROM.write(EEPROM_IS_FIRST_TIME_ADDRESS + i, 64);
     }
+}
+
+void removeFirstTime()
+{
+    for (int i = 0; i < 20; i++)
+    {
+        EEPROM.write(EEPROM_IS_FIRST_TIME_ADDRESS + i, 0);
+    }
+    
 }

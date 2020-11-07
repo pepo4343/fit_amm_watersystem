@@ -18,6 +18,8 @@
 #define LED_INTERNET_PIN 9
 #define LED_AUTO_PIN 10
 
+#define RESET_BUTTON_PIN 5
+
 #define ON LOW
 #define OFF HIGH
 
